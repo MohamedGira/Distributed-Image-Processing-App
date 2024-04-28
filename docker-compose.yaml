@@ -1,0 +1,37 @@
+services:
+  frontend: #react mounted on top of nginx
+    image: frontend_image
+    ports:
+      - "3000:80"
+    build: components/master/frontend
+    networks:
+      - front-tier
+      - back-tier
+    
+  backend:
+    image: backend_image
+    build: components/master/backend
+    networks:
+      - front-tier
+      - back-tier
+
+
+
+  #configuring nginx as a reverse proxy for backend containers
+  nginx-back:
+    image: nginx:alpine
+    depends_on:
+      - backend
+    ports:
+      # hostport:containerport
+      - 8000:8000
+    volumes:
+      - ./components/master/backend/conf.d:/etc/nginx/conf.d
+    networks:
+      - front-tier
+      - back-tier
+
+networks:
+  # The presence of these objects is sufficient to define them
+  front-tier: {}
+  back-tier: {}
