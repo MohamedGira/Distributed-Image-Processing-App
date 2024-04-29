@@ -1,21 +1,12 @@
 services:
-  frontend: #react mounted on top of nginx
-    image: frontend_image
-    ports:
-      - "3000:80"
-    build: components/master/frontend
-    networks:
-      - front-tier
-      - back-tier
-    
   backend:
     image: backend_image
-    build: components/master/backend
+    build: components/master
+    volumes:
+      - /bata:/bata
+
     networks:
-      - front-tier
       - back-tier
-
-
 
   #configuring nginx as a reverse proxy for backend containers
   nginx-back:
@@ -26,9 +17,8 @@ services:
       # hostport:containerport
       - 8000:8000
     volumes:
-      - ./components/master/backend/conf.d:/etc/nginx/conf.d
+      - ./components/master/conf.d:/etc/nginx/conf.d
     networks:
-      - front-tier
       - back-tier
 
 networks:

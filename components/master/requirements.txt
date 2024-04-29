@@ -1,0 +1,9 @@
+Flask
+flask_cors
+gunicorn
+python-dotenv
+boto3
+numpy
+pika
+#opencv-python
+redis

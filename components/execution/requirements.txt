@@ -1,0 +1,10 @@
+Flask
+flask_cors
+gunicorn
+python-dotenv
+boto3
+numpy
+pika
+#opencv-python #no need you have it in the image
+redis
+werkzeug

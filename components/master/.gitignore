@@ -1,0 +1,10 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+
+.env
+./__pycache__
+#ignore all __pycache__ directories
+__pycache__/
+#ignore all .pyc files
+*.pyc
+./*/__pycache__

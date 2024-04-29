@@ -1,0 +1,7 @@
+services:
+  worker:
+    image: execution_group  # Replace 'your_image:tag' with your Docker image and tag
+    volumes:
+      - /bata:/bata
+      - /bata/src/cleanCopy/components/execution:/app
+    restart: always

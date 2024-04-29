@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Upload Form</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script>
+    //for any added images, display it in a list
+    //multi-image display
+
+
+    const options = [
+      { label: "Grayscale", value: "grayscale" },
+      { label: "Edge Detection", value: "edge_detection" },
+      { label: "Thresholding", value: "thresholding" },
+      { label: "Inversion", value: "inversion" },
+      { label: "Blurring", value: "blurring" },
+      { label: "Sharpening", value: "sharpening" },
+      { label: "Smoothing", value: "smoothing" },
+      { label: "Dilation", value: "dilation" },
+      { label: "Erosion", value: "erosion" },
+      { label: "Convert RGB", value: "convert_RGB" },
+    ];
+
+    const root = document.getElementById('root');
+
+    function submitForm(event) {
+      event.preventDefault(); // Prevent the default form submission
+      const formData = new FormData(event.target);
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.text())
+        .then(data => {
+          
+          console.log(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+
+    const ImageUploadForm = () => {
+      return `
+        <form class="m-5" onSubmit="submitForm(event)">
+          <fieldset>
+            <legend>Image Processing App</legend>
+            <div class="mb-3">
+              <label class="form-label">Insert Images Here</label>
+              <br />
+              <input name="images" type="file" multiple id="ImgInput" class="form-control-file" />
+            </div>
+            <div class="mb-3">
+              <div>Select Image processing Operation</div>
+              <select name="process" class="form-select" aria-label="Default select example">
+                ${options.map(option => `<option value="${option.value}">${option.label}</option>`).join('')}
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </fieldset>
+          <br />
+          <br />
+
+          <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Input Image</h5>
+                  <ul id="inputImage" class="list-group list-group-flush"></ul>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card">
+                <h5 class="card-title">Processed Image</h5>
+                <img id="processedImage" class="card-img-top" alt="..." />
+                <div class="card-body"></div>
+              </div>
+            </div>
+          </div>
+        </form>
+      `;
+    };
+
+    root.innerHTML = ImageUploadForm();
+    document.getElementById('ImgInput').addEventListener('change', function (event) {
+      const input = event.target;
+      //not clickable
+      Toastify({
+            text: "This is a toast",
+            duration: 3000,
+            destination: null
+          }).showToast();
+      const images = document.getElementById('inputImage');
+      console.log('gere')
+      images.innerHTML = '';
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        ('card-img-top w-25 h-25 object-fit-contain border rounded').split(" ").forEach(el => el && img.classList.add(el));
+        images.appendChild(img);
+      }
+    });
+
+  </script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+</body>
+
+</html>
