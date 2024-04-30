@@ -1,7 +1,10 @@
 services:
-  worker:
-    image: execution_group  # Replace 'your_image:tag' with your Docker image and tag
+  backend:
+    image: execution_unit
+    build: .
     volumes:
       - /bata:/bata
-      - /bata/src/cleanCopy/components/execution:/app
+      - /bata/src/cleanCopy/components/execution:/app  
     restart: always
+
+#docker run -it execution_group -v /bata:/bata -v /bata/src/cleanCopy/components/execution:/app 

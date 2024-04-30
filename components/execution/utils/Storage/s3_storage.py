@@ -19,7 +19,7 @@ class S3StorageManager(StorageManeger):
             aws_secret_access_key=os.environ.get("AWS_SECRET"),
         )
 
-    def save(self, file, name, path=""):
+    def save(self, file, name, path="")->str:
         key = Path(path).joinpath(name).as_posix()
         try:
             self.client.upload_fileobj(

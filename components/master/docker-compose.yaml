@@ -1,0 +1,28 @@
+services:
+  backend:
+    image: backend_image
+    build: components/master
+    volumes:
+      - /bata:/bata
+      - /bata/src/cleanCopy/components/master:/app  
+
+    networks:
+      - back-tier
+
+  #configuring nginx as a reverse proxy for backend containers
+  nginx-back:
+    image: nginx:alpine
+    depends_on:
+      - backend
+    ports:
+      # hostport:containerport
+      - 8000:8000
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+    networks:
+      - back-tier
+
+networks:
+  # The presence of these objects is sufficient to define them
+  front-tier: {}
+  back-tier: {}

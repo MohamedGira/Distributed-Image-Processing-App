@@ -12,8 +12,8 @@ from utils.helpers import np_array_to_BytesIO_stream
 load_dotenv()
 
 database=RedisDatabase(os.getenv("REDIS_HOST"),os.getenv("REDIS_PORT"))
-storage=disk_storage.DiskStorage(os.getenv("SHARED_STORAGE_PATH"))
 storage = s3_storage.S3StorageManager(os.environ.get("AWS_BUCKET_NAME"))
+storage=disk_storage.DiskStorage(os.getenv("SHARED_STORAGE_PATH"))
 
 def main():
     print("Worker starting")
@@ -34,8 +34,10 @@ def main():
             print("Error: Image processing failed or Produced an Invalid Result.")
             return None
         image_stream=np_array_to_BytesIO_stream(Processed_Image,body['extension'])
-        storage.save(image_stream,f"{body['task_id']}.{body['extension']}",path="outputs")
-        database.update_dict(body["task_id"], {"status": "completed"}) #TODO: output_means?
+        output_means=storage.save(image_stream,f"{body['task_id']}.{body['extension']}",path="outputs")
+        database.update_dict(body["task_id"], {"status": "success","output_means":output_means}) 
+        #TODO: output_means?
+        print("finished")
         return True
 
     channel.basic_consume(queue=os.getenv("RABBITMQ_QUEUE_NAME"), on_message_callback=callback, auto_ack=True)

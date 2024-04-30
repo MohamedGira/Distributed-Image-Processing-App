@@ -9,7 +9,7 @@ class DiskStorage(StorageManeger):
     def __init__(self, storage_path):
         super().__init__(storage_path)
 
-    def save(self, stream: BytesIO, name, path=""):
+    def save(self, stream: BytesIO, name, path="")->str:
         """saves image and return access means"""
         access_means = Path(self.storage_path).joinpath(path, name).as_posix()
         with open(access_means, "wb") as f:

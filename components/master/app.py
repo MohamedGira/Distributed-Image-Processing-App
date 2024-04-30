@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,send_file
 from flask_cors import CORS
 
 import os
@@ -14,8 +14,8 @@ from io import BytesIO
 
 load_dotenv()
 
-storage=disk_storage.DiskStorage(os.getenv("SHARED_STORAGE_PATH"))
 storage = s3_storage.S3StorageManager(os.getenv("AWS_BUCKET_NAME"))
+storage=disk_storage.DiskStorage(os.getenv("SHARED_STORAGE_PATH"))
 submitter=rabbitmq_submitter.RabbitMQSubmitter(os.getenv("RABBITMQ_HOST"),os.getenv("RABBITMQ_QUEUE_NAME"),os.getenv("RABBITMQ_PORT"))
 database=RedisDatabase(os.getenv("REDIS_HOST"),os.getenv("REDIS_PORT"))
 
@@ -64,16 +64,26 @@ def upload():
 
     return "Images and text received successfully", 200
 
-
+#TODO: for s3, check how image must be returned. loaded then sent?
+def retrieve_image(output_means):
+    if issubclass(storage,disk_storage.DiskStorage):
+        return output_means
+    elif issubclass(storage,disk_storage.DiskStorage):
+        return output_means
+    else:
+        raise NotImplementedError("shouldn't reach here")
 #TODO: 0 auth, 0 denial of service protection... but meh
 @app.route("/status/<task_id>", methods=["GET"])
 def status(task_id):
     if task_id is None:
         return "Task ID not provided", 400
     response=database.get_dict(task_id)
-    return {"status":response.get("status"),}, 200
+    print(response.get("status"))
+    if response.get("status") != "success":
+        return {"status":response.get("status")}, 200
+    else:
+        return send_file(response.get("output_means"))
     # Get the status of the task from the database
-    status = "pending"
     return status, 200
 
 if __name__ == "__main__":
