@@ -1,11 +1,8 @@
 services:
   backend:
     image: backend_image
-    build: components/master
-    volumes:
-      - /bata:/bata
-      - /bata/src/cleanCopy/components/master:/app  
-
+    build: .
+   
     networks:
       - back-tier
 

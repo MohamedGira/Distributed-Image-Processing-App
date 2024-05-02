@@ -6,4 +6,7 @@ boto3
 numpy
 pika
 #opencv-python
+eventlet
 redis
+flask_socketio
+gevent
