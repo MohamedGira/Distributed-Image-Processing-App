@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Upload Form</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+    integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+    crossorigin="anonymous"></script>
+
+
+</head>
+
+
+<body>
+  <div id="root">
+  </div>
+
+  <script src="static/events.js"></script>
+  <script src="static/components.js"></script>
+  <script src="static/formUpload.js"></script>
+
+  <!-- Root -->
+  <script>
+    const root = document.getElementById('root');
+
+    root.innerHTML = ImageUploadForm();
+    document.getElementById('ImgInput').addEventListener('change', function (event) {
+      const input = event.target;
+      const images = document.getElementById('inputImage');
+      images.innerHTML = '';
+      let cards = ""
+      for (let i = 0; i < input.files.length; i++) {
+        images.innerHTML += CardItem(i,input.files[i].name);
+        document.getElementById(`${i}_input`).src = URL.createObjectURL(input.files[i]);
+      }
+    });
+
+  </script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+
+</body>
+
+</html>
