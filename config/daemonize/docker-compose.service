@@ -1,0 +1,15 @@
+#change paths depending on the service, and add to /etc/systemd/system/docker-compose.service
+
+[Unit]
+Description=Docker Compose Application
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory=/bata/src/cleanCopy/components/master2
+ExecStart=docker compose up -d --build
+
+[Install]
+WantedBy=multi-user.target
