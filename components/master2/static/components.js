@@ -10,9 +10,10 @@ const options = [
   { label: "Erosion", value: "erosion" },
   { label: "Convert RGB", value: "convert_RGB" },
 ];
-const CardItem = (count, alt) => {
-  return `    <style>
-  .resp{
+const CardItem = (count,alt) => {
+  return `    
+  <style>
+  .resp {
     display:flex;
     flex-direction:row;
     align-items:center;
@@ -52,18 +53,19 @@ const CardItem = (count, alt) => {
       </div>
   </div>
 </div>
-            `;
+
+    `;
 };
 
 const ImageUploadForm = () => {
   return `
       <form class="m-5" onSubmit="submitForm(event)">
         <fieldset>
-          <legend>Image Processing App</legend>
+          <legend>Image Processing App2</legend>
           <div class="mb-3">
             <label class="form-label">Insert Images Here</label>
             <br />
-            <input name="images" type="file" multiple id="ImgInput" class="form-control-file" />
+            <input name="images" type="file" accept="image/*" multiple id="ImgInput" class="form-control-file" />
           </div>
           <div class="mb-3">
             <div>Select Image processing Operation</div>
@@ -94,7 +96,7 @@ const ImageUploadForm = () => {
     `;
 };
 
-const OutputContainer = (id) => {
+const OutputContainer= (id) => {
   return `
   <div id="${id}_parent">
   <div id="${id}_status"></div>

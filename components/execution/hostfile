@@ -1,0 +1,4 @@
+mpi-worker-01 slots=1
+mpi-worker-02 slots=1
+mpi-worker-03 slots=1
+mpi-worker-04 slots=1

@@ -5,6 +5,7 @@ python-dotenv
 boto3
 numpy
 pika
-#opencv-python #no need you have it in the image
+opencv-python #no need you have it in the image
 redis
 werkzeug
+mpi4py

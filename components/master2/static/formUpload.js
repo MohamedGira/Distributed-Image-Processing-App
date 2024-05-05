@@ -4,21 +4,22 @@ async function submit_and_poll(id, formData) {
     body: formData,
   });
   //not clickable
+  try{
+    console.log("here")
   Toastify({
     text: "One Image Uploaded",
     duration: 3000,
     destination: null,
   }).showToast();
+}catch(e){console.error(e)}
   const data = await response.json();
 
   if (data.task_id) {
     document.getElementById(`${id}_parent`).innerHTML = OutputContainer(
       data.task_id
     );
-    const socket = new WebSocket(ws_root + `/result/${data.task_id}`);
-    socket.onmessage = (event) => {
-      handle_message(event.data);
-    };
+    console.log("strted")
+    start_smart_socket(`/result/${data.task_id}`)
   }
 }
 

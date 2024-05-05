@@ -2,7 +2,8 @@ services:
   backend:
     image: backend_image2
     build: .
-   
+    volumes:
+      - /bata:/bata
     networks:
       - back-tier
 

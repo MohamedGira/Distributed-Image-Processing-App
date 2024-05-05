@@ -35,7 +35,7 @@ def main():
             return None
         image_stream=np_array_to_BytesIO_stream(Processed_Image,body['extension'])
         output_means=storage.save(image_stream,f"{body['task_id']}.{body['extension']}",path="outputs")
-        database.update_dict(body["task_id"], {"status": "completed","output_means":output_means}) 
+        database.update_dict(body["task_id"], {"status": "success","output_means":output_means}) 
         #TODO: output_means?
         print("finished")
         return True

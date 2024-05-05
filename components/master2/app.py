@@ -34,11 +34,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Initialize services
 storage = disk_storage.DiskStorage(os.getenv("SHARED_STORAGE_PATH"))
-submitter = rabbitmq_submitter.RabbitMQSubmitter(
-    os.getenv("RABBITMQ_HOST"),
-    os.getenv("RABBITMQ_QUEUE_NAME"),
-    os.getenv("RABBITMQ_PORT"),
-)
+single_submitter = rabbitmq_submitter.RabbitMQSubmitter(os.getenv("RABBITMQ_HOST"),os.getenv("RABBITMQ_QUEUE_NAME"),os.getenv("RABBITMQ_PORT"))
+mpi_submitter = rabbitmq_submitter.RabbitMQSubmitter(os.getenv("RABBITMQ_HOST"),os.getenv("RABBITMQ_MPI_QUEUE_NAME"),os.getenv("RABBITMQ_PORT"))
 database = RedisDatabase(os.getenv("REDIS_HOST"), os.getenv("REDIS_PORT"))
 
 @app.get("/")
@@ -73,14 +70,19 @@ async def upload_one(image: UploadFile = File(...), process: str = Form(...)):
         "last_updated": str(datetime.now()),
     }
     database.save_dict(task_id,queue_request)
-    submitter.submit(queue_request)
+    size=len(stream)/1024**2
+    if size>=5: # use mpi for images > 5mb (network/performance threshold)
+        print("submitting to mpi, image size:",size,"MB")
+        mpi_submitter.submit(queue_request)
+    else:
+        print("submitting to single slave, image size:",size,"MB")
+        single_submitter.submit(queue_request)
         
-
     return queue_request
 
 def remove_file(path: str) -> None:
-    os.unlink(path)
     gc.collect()
+    os.unlink(path)
 
 @app.get("/result")
 async def result(path: str,background_tasks:BackgroundTasks):
@@ -106,7 +108,7 @@ def topicize(topic, message):
 async def status(websocket: WebSocket, task_id):
     await websocket.accept()
     timeout = 60
-    poll_interval = 6
+    poll_interval = 5
     try:
         for i in range(timeout // poll_interval):
             if task_id is None:
@@ -124,12 +126,12 @@ async def status(websocket: WebSocket, task_id):
                 return
             else:
                 await websocket.send_json(topicize(topic="result", message=response))
-            time.sleep(poll_interval)
-            await asyncio.sleep(0)
+            await asyncio.sleep(5)
 
         await websocket.send_json(
-            topicize(topic="timeout", message={"task_id": task_id, "status": "timeout"})
+            topicize(topic="result", message={"task_id": task_id, "status": "timeout"})
         )
+        await websocket.close(1000)
         return
     except Exception as e:
         print(e)

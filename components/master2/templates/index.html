@@ -34,7 +34,7 @@
       images.innerHTML = '';
       let cards = ""
       for (let i = 0; i < input.files.length; i++) {
-        images.innerHTML += CardItem(i,input.files[i].name);
+        images.innerHTML += CardItem(i,input.files[i].name)
         document.getElementById(`${i}_input`).src = URL.createObjectURL(input.files[i]);
       }
     });
@@ -46,3 +46,4 @@
 </body>
 
 </html>
+
