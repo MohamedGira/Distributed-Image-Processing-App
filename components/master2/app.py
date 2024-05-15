@@ -121,7 +121,7 @@ async def status(websocket: WebSocket, task_id):
                 await websocket.send_json(
                     topicize(topic="result", message={"status": "Task ID not found"})
                 )
-            elif response["status"] == "success":
+            elif response["status"] in ["success","failed"]:
                 await websocket.send_json(topicize(topic="result", message=response))
                 return
             else:

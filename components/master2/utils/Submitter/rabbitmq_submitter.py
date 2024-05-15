@@ -13,7 +13,7 @@ class RabbitMQSubmitter:
         print(f" [x] Connecting to RabbitMQ at {self.host_name}:{self.port}, queue {self.queue_name}")
         connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host_name,port=self.port))        
         channel=connection.channel()
-        channel.queue_declare(queue=self.queue_name)
+        channel.queue_declare(queue=self.queue_name,durable=True,arguments={"x-queue-type":"quorum",'x-delivery-limit':int(os.environ.get("MAX_RERUNS"))})
         channel.basic_publish(exchange='', routing_key=self.queue_name, body=json.dumps(request))
         print(f" [x] Sent {request}")
         connection.close()

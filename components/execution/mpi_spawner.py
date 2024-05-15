@@ -8,7 +8,7 @@ import os
 import json
 import pika
 import sys
-from utils.helpers import np_array_to_BytesIO_stream
+from utils.helpers import np_array_to_BytesIO_stream,report_failure
 import subprocess
 from pathlib import Path
 load_dotenv()
@@ -21,7 +21,7 @@ def main():
     print("Worker starting")
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=os.environ.get("RABBITMQ_HOST"),port=os.environ.get("RABBITMQ_PORT")))
     channel = connection.channel()
-    channel.queue_declare(queue=os.getenv("RABBITMQ_MPI_QUEUE_NAME"))
+    channel.queue_declare(queue=os.getenv("RABBITMQ_MPI_QUEUE_NAME"),durable=True,arguments={"x-queue-type":"quorum",'x-delivery-limit':int(os.environ.get("MAX_RERUNS"))})
     print("Worker is Ready")
     def callback(ch, method, properties, body):
         with open("/bata/test.log",'w') as output:
@@ -40,12 +40,15 @@ def main():
                 database.update_dict(body["task_id"], {"status": "processing"})
                 process=subprocess.run(cmd,shell=True,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 if (process.returncode ==0):
-                    database.update_dict(body["task_id"], {"status": "success","output_means":output_full_path}) 
-                return not process.returncode
+                    database.update_dict(body["task_id"], {"status": "success","output_means":output_full_path})
+                    ch.basic_ack(delivery_tag=method.delivery_tag)
+                else:
+                    report_failure(ch, method, properties, body)
             except Exception as e:
                 output.write(str(e))
+                report_failure(ch, method, properties, body)
 
-    channel.basic_consume(queue=os.getenv("RABBITMQ_MPI_QUEUE_NAME"), on_message_callback=callback, auto_ack=True)
+    channel.basic_consume(queue=os.getenv("RABBITMQ_MPI_QUEUE_NAME"), on_message_callback=callback, auto_ack=False)
 
     print(" [*] Waiting for messages. To exit press CTRL+C")
     channel.start_consuming()

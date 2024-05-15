@@ -1,11 +1,11 @@
 async function submit_and_poll(id, formData) {
+  document.getElementById(`${id}_parent`).innerHTML = "Uploading"
   const response = await fetch("/uploadOne", {
     method: "POST",
     body: formData,
   });
   //not clickable
   try{
-    console.log("here")
   Toastify({
     text: "One Image Uploaded",
     duration: 3000,
