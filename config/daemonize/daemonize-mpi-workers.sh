@@ -22,3 +22,4 @@
 sudo apt update
 sudo apt install cron
 sudo systemctl enable cron
+#  * * * * * /bata/venv/bin/python3 /bata/src/cleanCopy/components/execution/mpi_spawner.py >> /bata/mpi_spawner.log 2>&1
