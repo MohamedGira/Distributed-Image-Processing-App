@@ -53,7 +53,7 @@ The project includes systemd service configurations to ensure that the applicati
 
 2. **Server Service:**
    - Configured via `configure_server.sh`.
-   - Service description: `docker-compose`.
+   - Service description: `docker-server-compose`.
 
 3. **Broker Service:**
    - Configured via `broker-node-config`.
@@ -64,8 +64,8 @@ To enable and start the services manually:
 sudo systemctl enable docker-worker-compose
 sudo systemctl start docker-worker-compose
 
-sudo systemctl enable docker-compose
-sudo systemctl start docker-compose
+sudo systemctl enable docker-server-compose
+sudo systemctl start docker-server-compose
 
 ```
 ## Demos:

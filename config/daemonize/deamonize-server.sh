@@ -1,4 +1,4 @@
-sudo tee /etc/systemd/system/docker-compose.service <<EOF
+sudo tee /etc/systemd/system/docker-server-compose.service <<EOF
 [Unit]
 Description=Docker Compose Application
 Requires=docker.service
@@ -15,5 +15,5 @@ ExecStop=docker compose down
 WantedBy=multi-user.target
 EOF
 
-sudo systemctl enable docker-compose
-sudo systemctl start docker-compose
+sudo systemctl enable docker-server-compose
+sudo systemctl start docker-server-compose
